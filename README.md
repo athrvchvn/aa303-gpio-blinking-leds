@@ -14,7 +14,7 @@ Interfacing LEDs with a Raspberry Pi and an ESP32 across three parts:
 
 | Path | Description |
 |---|---|
-| [`24003021_Atharva_chavan_report1.pdf`](24003021_Atharva_chavan_report1.pdf) | The compiled report (10 pages) |
+| [`240003021_Atharva_Chavan_report1.pdf`](240003021_Atharva_Chavan_report1.pdf) | The compiled report (10 pages) |
 | [`gpio_led_lab_report.tex`](gpio_led_lab_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
 | [`figures/`](figures/) | Photographs of the setups, consoles and LED patterns |
 | [`code/`](code/) | Source for all three parts, on both boards — see [`code/README.md`](code/README.md) |
