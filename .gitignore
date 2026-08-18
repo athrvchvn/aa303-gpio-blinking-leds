@@ -1,0 +1,18 @@
+# LaTeX build artefacts
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Python
+__pycache__/
+*.pyc
+
+# Raw camera/WhatsApp originals (renamed copies live in figures/)
+WhatsApp Image *.jpeg
+
+# Reference document from another student - not mine to publish
+Basic Operations Using GPIO Blinking LEDs.pdf
