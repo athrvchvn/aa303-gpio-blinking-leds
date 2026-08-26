@@ -1,36 +1,60 @@
-# AA303 — IoT for Space Applications · Lab Report 1
+# AA303 — IoT for Space Applications
 
-**Basic Operations Using GPIO: Blinking LEDs**
+Chavan Atharva Sunil · 240003021
 
-Chavan Atharva Sunil · 240003021 · experiment performed 6 August 2026
+Lab reports and source code for the AA303 laboratory course. Each report has its
+own directory holding the compiled PDF, its LaTeX source and its figures. The
+code for all experiments is shared, and lives in [`code/`](code/) at the root.
 
-Interfacing LEDs with a Raspberry Pi and an ESP32 across three parts:
+## Reports
+
+| Report | Title | Directory | PDF |
+|---|---|---|---|
+| 1 | Basic Operations Using GPIO: Blinking LEDs | [`report-1/`](report-1/) | [`240003021_Atharva_Chavan_report1.pdf`](report-1/240003021_Atharva_Chavan_report1.pdf) |
+| 2 | — | — | in preparation |
+
+### Report 1 — Basic Operations Using GPIO: Blinking LEDs
+
+Experiment performed 6 August 2026. Interfacing LEDs with a Raspberry Pi and an
+ESP32 across three parts:
 
 1. **Four LEDs blinking simultaneously** — all pins driven HIGH and LOW together at one-second intervals.
 2. **One LED ON at a time** — a running-light pattern, the lit position advancing once per second.
 3. **Eight-LED binary display** — a decimal number (0–255) entered at the terminal or Serial Monitor is shown on eight LEDs as its 8-bit binary equivalent.
 
-## Contents
-
 | Path | Description |
 |---|---|
-| [`240003021_Atharva_Chavan_report1.pdf`](240003021_Atharva_Chavan_report1.pdf) | The compiled report (10 pages) |
-| [`gpio_led_lab_report.tex`](gpio_led_lab_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`figures/`](figures/) | Photographs of the setups, consoles and LED patterns |
-| [`code/`](code/) | Source for all three parts, on both boards — see [`code/README.md`](code/README.md) |
+| [`report-1/240003021_Atharva_Chavan_report1.pdf`](report-1/240003021_Atharva_Chavan_report1.pdf) | The compiled report (10 pages) |
+| [`report-1/gpio_led_lab_report.tex`](report-1/gpio_led_lab_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`report-1/figures/`](report-1/figures/) | Photographs of the setups, consoles and LED patterns |
+
+### Report 2
+
+Report 2 is being written and will be added here as `report-2/` once it is ready.
+
+## Code
+
+[`code/`](code/) holds the source for every experiment, on both boards —
+Python for the Raspberry Pi and Arduino sketches for the ESP32. See
+[`code/README.md`](code/README.md) for the file-by-file listing, the pin
+assignments and the wiring notes.
 
 ## Video demonstration
 
-Demonstration videos of all three parts on both boards, along with this report and
-the source code, are in the shared Drive folder:
+Demonstration videos, along with the reports and the source code, are in the
+shared Drive folder:
 
 <https://drive.google.com/drive/folders/1T0wegsZBgEGQ7PwirSbTVWgo-MvS_5ov?usp=sharing>
 
-## Building the report
+## Building a report
+
+Each report builds from inside its own directory, where the LaTeX source sits
+alongside its `figures/`:
 
 ```bash
+cd report-1
 pdflatex gpio_led_lab_report.tex
 pdflatex gpio_led_lab_report.tex     # second pass resolves references
 ```
 
-Or upload `gpio_led_lab_report.tex` together with `figures/` to Overleaf.
+Or upload the `.tex` together with its `figures/` directory to Overleaf.
