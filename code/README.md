@@ -1,20 +1,27 @@
 # AA303 — IoT for Space Applications
-## Lab Report 1 — Basic Operations Using GPIO: Blinking LEDs
+## Source code — shared by Lab Reports 1 and 2
 
-Chavan Atharva Sunil · 240003021 · experiment performed 6 August 2026
+Chavan Atharva Sunil · 240003021
 
-Source code for the three parts of the experiment, on both boards.
-Each file corresponds to a listing in the report.
+Source code for both lab reports, on both boards. Each file corresponds to a
+listing in one or both reports:
+
+- [`../report-1/`](../report-1/) — Basic Operations Using GPIO: Blinking LEDs
+  (four LEDs blinking together, a one-LED-at-a-time chaser, and the eight-LED
+  binary display)
+- [`../report-2/`](../report-2/) — Binary Representation of Numbers Using LEDs
+  (the eight-LED binary display in more detail, with a Raspberry Pi/ESP32
+  cross-check)
 
 ---
 
 ### Raspberry Pi (Python, `RPi.GPIO`)
 
-| File | Report listing | What it does |
+| File | Listing | What it does |
 |---|---|---|
 | `raspberry-pi/blink_all_leds.py` | Listing 1 | Four LEDs blink simultaneously, 1 s ON / 1 s OFF |
 | `raspberry-pi/sequential_leds.py` | Listing 3 | One LED ON at a time, advancing once per second |
-| `raspberry-pi/binary_leds.py` | Listing 4 | Eight LEDs display a decimal number (0–255) in binary |
+| `raspberry-pi/binary_leds.py` | Report 1 Listing 4 · Report 2 Listing 1 | Eight LEDs display a decimal number (0–255) in binary |
 
 Run from the terminal:
 
@@ -32,11 +39,11 @@ so its pin numbers are physical header positions: 40, 38, 36, 35, 33, 32,
 
 ### ESP32 (Arduino C++)
 
-| Sketch | Report listing | What it does |
+| Sketch | Listing | What it does |
 |---|---|---|
 | `esp32/blink_all_leds/` | Listing 2 | Four LEDs blink simultaneously, 1 s ON / 1 s OFF |
 | `esp32/sequential_leds/` | — | One LED ON at a time (the ESP32 version described in §3.3) |
-| `esp32/binary_leds/` | Listing 5 | Eight LEDs display a number entered on the Serial Monitor |
+| `esp32/binary_leds/` | Report 1 Listing 5 · Report 2 Listing 2 | Eight LEDs display a number entered on the Serial Monitor |
 
 Each sketch sits in its own folder, as the Arduino IDE requires. Open the
 `.ino`, select **ESP32 Dev Module** and the correct COM port, then upload.

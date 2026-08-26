@@ -11,7 +11,7 @@ code for all experiments is shared, and lives in [`code/`](code/) at the root.
 | Report | Title | Directory | PDF |
 |---|---|---|---|
 | 1 | Basic Operations Using GPIO: Blinking LEDs | [`report-1/`](report-1/) | [`240003021_Atharva_Chavan_report1.pdf`](report-1/240003021_Atharva_Chavan_report1.pdf) |
-| 2 | — | — | in preparation |
+| 2 | Binary Representation of Numbers Using LEDs | [`report-2/`](report-2/) | [`240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) |
 
 ### Report 1 — Basic Operations Using GPIO: Blinking LEDs
 
@@ -28,9 +28,18 @@ ESP32 across three parts:
 | [`report-1/gpio_led_lab_report.tex`](report-1/gpio_led_lab_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
 | [`report-1/figures/`](report-1/figures/) | Photographs of the setups, consoles and LED patterns |
 
-### Report 2
+### Report 2 — Binary Representation of Numbers Using LEDs
 
-Report 2 is being written and will be added here as `report-2/` once it is ready.
+Experiment performed 13 August 2026. A decimal number (0–255) entered at the
+terminal is converted to 8-bit binary in software and displayed on eight LEDs
+driven directly from the GPIO pins of a Raspberry Pi — one LED per bit, most
+significant bit first — with the result cross-checked on an ESP32.
+
+| Path | Description |
+|---|---|
+| [`report-2/240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) | The compiled report (7 pages) |
+| [`report-2/gpio_binary_led_report.tex`](report-2/gpio_binary_led_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`report-2/figures/`](report-2/figures/) | Photographs of the setup, consoles and the eight-LED display |
 
 ## Code
 
@@ -52,9 +61,9 @@ Each report builds from inside its own directory, where the LaTeX source sits
 alongside its `figures/`:
 
 ```bash
-cd report-1
-pdflatex gpio_led_lab_report.tex
-pdflatex gpio_led_lab_report.tex     # second pass resolves references
+cd report-1   # or report-2
+pdflatex *.tex
+pdflatex *.tex     # second pass resolves references
 ```
 
 Or upload the `.tex` together with its `figures/` directory to Overleaf.
