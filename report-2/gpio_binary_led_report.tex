@@ -473,6 +473,31 @@ immediately on each new entry.
 \noindent In both cases the sum of the place values of the lit LEDs equals the number
 that was entered, confirming that the display is a correct binary representation.
 
+\subsection*{Additional worked examples}
+
+Because the conversion is deterministic --- the same fixed mapping from a decimal
+input to an 8-bit string and then to pin state, already confirmed correct against the
+two terminal outputs above --- three further inputs were traced through the same
+program logic to illustrate the display across a wider range of values:
+
+\vspace{2pt}
+\noindent
+\begin{tabularx}{\textwidth}{@{}c c c X@{}}
+\toprule
+\rowcolor{soft}
+\textbf{Input (decimal)} & \textbf{Binary} & \textbf{Check} & \textbf{LEDs lit (bit 7 \ldots bit 0)} \\
+\midrule
+$200$ & \texttt{11001000} & $128+64+8=200$ & bits 7, 6, 3 \\
+$20$  & \texttt{00010100} & $16+4=20$      & bits 4, 2 \\
+$25$  & \texttt{00011001} & $16+8+1=25$    & bits 4, 3, 0 \\
+\bottomrule
+\end{tabularx}
+
+\vspace{6pt}
+\noindent These are not separate photographed runs; they extend the demonstration
+using the same verified conversion rather than requiring a new capture for every
+value in the $0$--$255$ range.
+
 \subsection*{Recorded outputs --- Raspberry Pi terminal}
 
 \begin{figure}[H]
