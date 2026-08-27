@@ -10,8 +10,7 @@ listing in one or both reports:
   (four LEDs blinking together, a one-LED-at-a-time chaser, and the eight-LED
   binary display)
 - [`../report-2/`](../report-2/) — Binary Representation of Numbers Using LEDs
-  (the eight-LED binary display in more detail, with a Raspberry Pi/ESP32
-  cross-check)
+  (the eight-LED binary display in more detail, on the Raspberry Pi only)
 
 ---
 
@@ -21,7 +20,7 @@ listing in one or both reports:
 |---|---|---|
 | `raspberry-pi/blink_all_leds.py` | Listing 1 | Four LEDs blink simultaneously, 1 s ON / 1 s OFF |
 | `raspberry-pi/sequential_leds.py` | Listing 3 | One LED ON at a time, advancing once per second |
-| `raspberry-pi/binary_leds.py` | Report 1 Listing 4 · Report 2 Listing 1 | Eight LEDs display a decimal number (0–255) in binary |
+| `raspberry-pi/binary_leds.py` | Report 1 Listing 4 · Report 2 Listing 1 | Eight LEDs display a decimal number (0–255) in binary. Used by both reports. |
 
 Run from the terminal:
 
@@ -43,7 +42,7 @@ so its pin numbers are physical header positions: 40, 38, 36, 35, 33, 32,
 |---|---|---|
 | `esp32/blink_all_leds/` | Listing 2 | Four LEDs blink simultaneously, 1 s ON / 1 s OFF |
 | `esp32/sequential_leds/` | — | One LED ON at a time (the ESP32 version described in §3.3) |
-| `esp32/binary_leds/` | Report 1 Listing 5 · Report 2 Listing 2 | Eight LEDs display a number entered on the Serial Monitor |
+| `esp32/binary_leds/` | Report 1 Listing 5 | Eight LEDs display a number entered on the Serial Monitor. Report 2 covers the Raspberry Pi only. |
 
 Each sketch sits in its own folder, as the Arduino IDE requires. Open the
 `.ino`, select **ESP32 Dev Module** and the correct COM port, then upload.

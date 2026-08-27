@@ -32,12 +32,12 @@ ESP32 across three parts:
 
 Experiment performed 13 August 2026. A decimal number (0–255) entered at the
 terminal is converted to 8-bit binary in software and displayed on eight LEDs
-driven directly from the GPIO pins of a Raspberry Pi — one LED per bit, most
-significant bit first — with the result cross-checked on an ESP32.
+driven directly, with no series resistors, from the GPIO pins of a Raspberry
+Pi — one LED per bit, most significant bit first.
 
 | Path | Description |
 |---|---|
-| [`report-2/240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) | The compiled report (7 pages) |
+| [`report-2/240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) | The compiled report (6 pages) |
 | [`report-2/gpio_binary_led_report.tex`](report-2/gpio_binary_led_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
 | [`report-2/figures/`](report-2/figures/) | Photographs of the setup, consoles and the eight-LED display |
 

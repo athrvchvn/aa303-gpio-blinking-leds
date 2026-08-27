@@ -233,7 +233,7 @@
 Submitted by  & \studentname \\
 Roll Number   & \rollnumber \\
 Date of Experiment & \expdate \\
-Board Used    & Raspberry Pi (BOARD numbering) \quad\textbullet\quad verified on ESP32 \\
+Board Used    & Raspberry Pi (BOARD numbering) \\
 \bottomrule
 \end{tabularx}
 
@@ -300,7 +300,6 @@ Raspberry Pi), so for sustained use a series resistor of roughly $220\,\Omega$ p
 4 & Male--female jumper wires                 & 9--12 & GPIO header to breadboard connections \\
 5 & USB power supply                          & 1 & Powering the Raspberry Pi \\
 6 & Monitor, keyboard and mouse               & 1 & Entering the number at the terminal \\
-7 & ESP32 development board (optional)        & 1 & Cross-checking the same logic \\
 \bottomrule
 \end{tabularx}
 
@@ -446,36 +445,6 @@ finally:
     GPIO.cleanup()
 \end{lstlisting}
 
-\subsection{Cross-check on the ESP32}
-
-To confirm that the result depends on the logic and not on the particular board, the
-same experiment was repeated on an ESP32, with the eight LEDs moved to GPIO 23, 22, 21,
-19, 18, 5, 4 and 2 (most significant bit first) and the number entered in the Arduino
-IDE Serial Monitor instead of a terminal. The conversion is written as a shift-and-mask
-loop rather than a format string, but is equivalent:
-
-\begin{lstlisting}[language=C++, caption={The same conversion on the ESP32, reading the Serial Monitor.}, label={lst:esp}]
-const int LED_PINS[8] = {23, 22, 21, 19, 18, 5, 4, 2};  // MSB first
-
-void loop() {
-  if (Serial.available() > 0) {
-    String line = Serial.readStringUntil('\n');
-    line.trim();
-    if (line.length() == 0) return;
-
-    int number = line.toInt();
-    if (number < 0 || number > 255) return;
-
-    for (int b = 7; b >= 0; b--) {
-      int value = (number >> b) & 1;           // extract one bit
-      digitalWrite(LED_PINS[7 - b], value);    // drive the matching LED
-      Serial.print(value);
-    }
-    Serial.println();
-  }
-}
-\end{lstlisting}
-
 %------------------------------------------------------------------ 4. RESULT
 \section{Result and Output}
 
@@ -497,19 +466,14 @@ immediately on each new entry.
 \midrule
 1 & $125$ & \texttt{01111101} & $64+32+16+8+4+1 = 125$ \\
 2 & $7$   & \texttt{00000111} & $4+2+1 = 7$ \\
-3 & $200$ & \texttt{11001000} & $128+64+8 = 200$ \\
-4 & $20$  & \texttt{00010100} & $16+4 = 20$ \\
-5 & $25$  & \texttt{00011001} & $16+8+1 = 25$ \\
 \bottomrule
 \end{tabularx}
 
 \vspace{8pt}
-\noindent Five outputs were recorded in total --- two on the Raspberry Pi itself and
-three on the ESP32 cross-check. In every case the sum of the place values of the lit
-LEDs equals the number that was entered, confirming that the display is a correct
-binary representation.
+\noindent In both cases the sum of the place values of the lit LEDs equals the number
+that was entered, confirming that the display is a correct binary representation.
 
-\subsection*{Outputs 1 and 2 --- Raspberry Pi terminal}
+\subsection*{Recorded outputs --- Raspberry Pi terminal}
 
 \begin{figure}[H]
 \centering
@@ -521,19 +485,6 @@ list and then one digit per line; zero-padded to eight places this is
 \texttt{00000111}. The traceback visible at the top is discussed in
 Section~\ref{sec:discussion}.}
 \label{fig:out1}
-\end{figure}
-
-\subsection*{Outputs 3--5 --- cross-check on the ESP32}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth, trim=393 102 365 300, clip]{figures/esp32_serial_monitor.jpg}
-\caption{Three further outputs, taken on the ESP32 cross-check:
-\textbf{Output 3} $200 \rightarrow \texttt{11001000}$, \textbf{Output 4}
-$20 \rightarrow \texttt{00010100}$ and \textbf{Output 5}
-$25 \rightarrow \texttt{00011001}$. Each printed string matched the pattern of lit LEDs
-on the breadboard.}
-\label{fig:out234}
 \end{figure}
 
 \subsection*{The display itself}
@@ -609,8 +560,8 @@ string computed in software for every value tested.
 
 The exercise linked a software representation directly to a physical one: converting a
 number to binary, mapping each bit to a pin, and reading the result back off the
-hardware. Repeating it on an ESP32 with a different conversion method and a different
-input path produced identical behaviour, confirming that the result follows from the
-binary representation itself and not from any feature of a particular board.
+hardware. The pattern of lit LEDs agreed with the binary string printed on the console
+for every input tested, confirming that the conversion and the wiring were both
+correct.
 
 \end{document}
