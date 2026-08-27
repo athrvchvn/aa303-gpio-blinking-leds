@@ -53,7 +53,7 @@ assignments and the wiring notes.
 Demonstration videos, along with the reports and the source code, are in the
 shared Drive folder:
 
-<https://drive.google.com/drive/folders/1T0wegsZBgEGQ7PwirSbTVWgo-MvS_5ov?usp=sharing>
+<https://drive.google.com/drive/folders/1LhoB_Ec-UeLj2YO6Qbc27we5VWibq4Kw?usp=sharing>
 
 ## Building a report
 
