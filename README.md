@@ -3,18 +3,19 @@
 Chavan Atharva Sunil · 240003021
 
 Lab reports and source code for the AA303 laboratory course. Each report has its
-own directory holding the compiled PDF, its LaTeX source and its figures. The
+own directory, named `Report N - <title>`, holding the compiled PDF, its LaTeX
+source and its figures. The
 code for all experiments is shared, and lives in [`code/`](code/) at the root.
 
 ## Reports
 
 | Report | Title | Directory | PDF |
 |---|---|---|---|
-| 1 | Basic Operations Using GPIO: Blinking LEDs | [`report-1/`](report-1/) | [`240003021_Atharva_Chavan_report1.pdf`](report-1/240003021_Atharva_Chavan_report1.pdf) |
-| 2 | Binary Representation of Numbers Using LEDs | [`report-2/`](report-2/) | [`240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) |
-| 3 | Pulse Width Modulation Using GPIO | [`report-3/`](report-3/) | [`240003021_Atharva_Chavan_report3.pdf`](report-3/240003021_Atharva_Chavan_report3.pdf) |
-| 4 | DHT11 Sensor Data Reading for Temperature and Humidity | [`report-4/`](report-4/) | [`240003021_Atharva_Chavan_report4.pdf`](report-4/240003021_Atharva_Chavan_report4.pdf) |
-| 5 | BMP280 Sensor Data Reading for Pressure, Temperature and Altitude | [`report-5/`](report-5/) | [`240003021_Atharva_Chavan_report5.pdf`](report-5/240003021_Atharva_Chavan_report5.pdf) |
+| 1 | Basic Operations Using GPIO: Blinking LEDs | [`Report 1 - Basic Operations Using GPIO - Blinking LEDs/`](Report%201%20-%20Basic%20Operations%20Using%20GPIO%20-%20Blinking%20LEDs/) | [`240003021_Atharva_Chavan_report1.pdf`](Report%201%20-%20Basic%20Operations%20Using%20GPIO%20-%20Blinking%20LEDs/240003021_Atharva_Chavan_report1.pdf) |
+| 2 | Binary Representation of Numbers Using LEDs | [`Report 2 - Binary Representation of Numbers Using LEDs/`](Report%202%20-%20Binary%20Representation%20of%20Numbers%20Using%20LEDs/) | [`240003021_Atharva_Chavan_report2.pdf`](Report%202%20-%20Binary%20Representation%20of%20Numbers%20Using%20LEDs/240003021_Atharva_Chavan_report2.pdf) |
+| 3 | Pulse Width Modulation Using GPIO | [`Report 3 - Pulse Width Modulation Using GPIO/`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/) | [`240003021_Atharva_Chavan_report3.pdf`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/240003021_Atharva_Chavan_report3.pdf) |
+| 4 | DHT11 Sensor Data Reading for Temperature and Humidity | [`Report 4 - DHT11 Sensor Data Reading for Temperature and Humidity/`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/) | [`240003021_Atharva_Chavan_report4.pdf`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/240003021_Atharva_Chavan_report4.pdf) |
+| 5 | BMP280 Sensor Data Reading for Pressure, Temperature and Altitude | [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/) | [`240003021_Atharva_Chavan_report5.pdf`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/240003021_Atharva_Chavan_report5.pdf) |
 
 ### Report 1 — Basic Operations Using GPIO: Blinking LEDs
 
@@ -27,9 +28,9 @@ ESP32 across three parts:
 
 | Path | Description |
 |---|---|
-| [`report-1/240003021_Atharva_Chavan_report1.pdf`](report-1/240003021_Atharva_Chavan_report1.pdf) | The compiled report (10 pages) |
-| [`report-1/gpio_led_lab_report.tex`](report-1/gpio_led_lab_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`report-1/figures/`](report-1/figures/) | Photographs of the setups, consoles and LED patterns |
+| [`Report 1 - Basic Operations Using GPIO - Blinking LEDs/240003021_Atharva_Chavan_report1.pdf`](Report%201%20-%20Basic%20Operations%20Using%20GPIO%20-%20Blinking%20LEDs/240003021_Atharva_Chavan_report1.pdf) | The compiled report (10 pages) |
+| [`Report 1 - Basic Operations Using GPIO - Blinking LEDs/gpio_led_lab_report.tex`](Report%201%20-%20Basic%20Operations%20Using%20GPIO%20-%20Blinking%20LEDs/gpio_led_lab_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`Report 1 - Basic Operations Using GPIO - Blinking LEDs/figures/`](Report%201%20-%20Basic%20Operations%20Using%20GPIO%20-%20Blinking%20LEDs/figures/) | Photographs of the setups, consoles and LED patterns |
 
 ### Report 2 — Binary Representation of Numbers Using LEDs
 
@@ -40,9 +41,9 @@ Pi — one LED per bit, most significant bit first.
 
 | Path | Description |
 |---|---|
-| [`report-2/240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) | The compiled report (6 pages) |
-| [`report-2/gpio_binary_led_report.tex`](report-2/gpio_binary_led_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`report-2/figures/`](report-2/figures/) | Photographs of the setup, consoles and the eight-LED display |
+| [`Report 2 - Binary Representation of Numbers Using LEDs/240003021_Atharva_Chavan_report2.pdf`](Report%202%20-%20Binary%20Representation%20of%20Numbers%20Using%20LEDs/240003021_Atharva_Chavan_report2.pdf) | The compiled report (6 pages) |
+| [`Report 2 - Binary Representation of Numbers Using LEDs/gpio_binary_led_report.tex`](Report%202%20-%20Binary%20Representation%20of%20Numbers%20Using%20LEDs/gpio_binary_led_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`Report 2 - Binary Representation of Numbers Using LEDs/figures/`](Report%202%20-%20Binary%20Representation%20of%20Numbers%20Using%20LEDs/figures/) | Photographs of the setup, consoles and the eight-LED display |
 
 ### Report 3 — Pulse Width Modulation Using GPIO
 
@@ -55,9 +56,9 @@ controlled by software PWM from the GPIO pins of a Raspberry Pi (`RPi.GPIO`,
 
 | Path | Description |
 |---|---|
-| [`report-3/240003021_Atharva_Chavan_report3.pdf`](report-3/240003021_Atharva_Chavan_report3.pdf) | The compiled report (8 pages) |
-| [`report-3/gpio_pwm_led_report.tex`](report-3/gpio_pwm_led_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`report-3/figures/`](report-3/figures/) | Stills taken from the demonstration videos, plus the two CSV files behind the duty-cycle charts (`pwm_wave_program.csv` is the programmed profile; `led_brightness.csv` is the brightness of each LED read off the video frames) |
+| [`Report 3 - Pulse Width Modulation Using GPIO/240003021_Atharva_Chavan_report3.pdf`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/240003021_Atharva_Chavan_report3.pdf) | The compiled report (8 pages) |
+| [`Report 3 - Pulse Width Modulation Using GPIO/gpio_pwm_led_report.tex`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/gpio_pwm_led_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`Report 3 - Pulse Width Modulation Using GPIO/figures/`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/figures/) | Stills taken from the demonstration videos, plus the two CSV files behind the duty-cycle charts (`pwm_wave_program.csv` is the programmed profile; `led_brightness.csv` is the brightness of each LED read off the video frames) |
 
 ### Report 4 — DHT11 Sensor Data Reading for Temperature and Humidity
 
@@ -69,9 +70,9 @@ on two boards:
 
 | Path | Description |
 |---|---|
-| [`report-4/240003021_Atharva_Chavan_report4.pdf`](report-4/240003021_Atharva_Chavan_report4.pdf) | The compiled report (8 pages) |
-| [`report-4/dht11_sensor_report.tex`](report-4/dht11_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`report-4/figures/`](report-4/figures/) | Photographs of the setups and the module, and stills (Pi terminal, phone page, Arduino IDE) taken from the demonstration videos |
+| [`Report 4 - DHT11 Sensor Data Reading for Temperature and Humidity/240003021_Atharva_Chavan_report4.pdf`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/240003021_Atharva_Chavan_report4.pdf) | The compiled report (8 pages) |
+| [`Report 4 - DHT11 Sensor Data Reading for Temperature and Humidity/dht11_sensor_report.tex`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/dht11_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`Report 4 - DHT11 Sensor Data Reading for Temperature and Humidity/figures/`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/figures/) | Photographs of the setups and the module, and stills (Pi terminal, phone page, Arduino IDE) taken from the demonstration videos |
 
 ### Report 5 — BMP280 Sensor Data Reading for Pressure, Temperature and Altitude
 
@@ -84,9 +85,9 @@ The report also works through why the same room reads 719 m on one day and 627 m
 
 | Path | Description |
 |---|---|
-| [`report-5/240003021_Atharva_Chavan_report5.pdf`](report-5/240003021_Atharva_Chavan_report5.pdf) | The compiled report (7 pages) |
-| [`report-5/bmp280_sensor_report.tex`](report-5/bmp280_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`report-5/figures/`](report-5/figures/) | Photographs of the setups and the module, and stills (Pi editor/terminal, ESP32 dashboard) taken from the demonstration videos |
+| [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/240003021_Atharva_Chavan_report5.pdf`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/240003021_Atharva_Chavan_report5.pdf) | The compiled report (7 pages) |
+| [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/bmp280_sensor_report.tex`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/bmp280_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/figures/`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/figures/) | Photographs of the setups and the module, and stills (Pi editor/terminal, ESP32 dashboard) taken from the demonstration videos |
 
 ## Code
 
@@ -109,7 +110,7 @@ Each report builds from inside its own directory, where the LaTeX source sits
 alongside its `figures/`:
 
 ```bash
-cd report-1   # or report-2 ... report-5
+cd "Report 1 - Basic Operations Using GPIO - Blinking LEDs"   # or any other report folder
 pdflatex *.tex
 pdflatex *.tex     # second pass resolves references
 ```

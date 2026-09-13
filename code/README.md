@@ -6,17 +6,17 @@ Chavan Atharva Sunil · 240003021
 Source code for all five lab reports. Each file corresponds to a listing in
 one or more reports:
 
-- [`../report-1/`](../report-1/) — Basic Operations Using GPIO: Blinking LEDs
+- [`../Report 1 - Basic Operations Using GPIO - Blinking LEDs/`](../Report%201%20-%20Basic%20Operations%20Using%20GPIO%20-%20Blinking%20LEDs/) — Basic Operations Using GPIO: Blinking LEDs
   (four LEDs blinking together, a one-LED-at-a-time chaser, and the eight-LED
   binary display)
-- [`../report-2/`](../report-2/) — Binary Representation of Numbers Using LEDs
+- [`../Report 2 - Binary Representation of Numbers Using LEDs/`](../Report%202%20-%20Binary%20Representation%20of%20Numbers%20Using%20LEDs/) — Binary Representation of Numbers Using LEDs
   (the eight-LED binary display in more detail, on the Raspberry Pi only)
-- [`../report-3/`](../report-3/) — Pulse Width Modulation Using GPIO
+- [`../Report 3 - Pulse Width Modulation Using GPIO/`](../Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/) — Pulse Width Modulation Using GPIO
   (eight LEDs dimmed by software PWM, on the Raspberry Pi only)
-- [`../report-4/`](../report-4/) — DHT11 Sensor Data Reading for Temperature
+- [`../Report 4 - DHT11 Sensor Data Reading for Temperature and Humidity/`](../Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/) — DHT11 Sensor Data Reading for Temperature
   and Humidity (single-wire sensor: `adafruit_dht` on the Raspberry Pi, and an
   ESP32 web page served from its own access point)
-- [`../report-5/`](../report-5/) — BMP280 Sensor Data Reading for Pressure,
+- [`../Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/`](../Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/) — BMP280 Sensor Data Reading for Pressure,
   Temperature and Altitude (I²C sensor: `adafruit_bmp280` on the Raspberry Pi,
   and a live ESP32 web dashboard served from its own access point)
 
