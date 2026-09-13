@@ -14,6 +14,7 @@ code for all experiments is shared, and lives in [`code/`](code/) at the root.
 | 2 | Binary Representation of Numbers Using LEDs | [`report-2/`](report-2/) | [`240003021_Atharva_Chavan_report2.pdf`](report-2/240003021_Atharva_Chavan_report2.pdf) |
 | 3 | Pulse Width Modulation Using GPIO | [`report-3/`](report-3/) | [`240003021_Atharva_Chavan_report3.pdf`](report-3/240003021_Atharva_Chavan_report3.pdf) |
 | 4 | DHT11 Sensor Data Reading for Temperature and Humidity | [`report-4/`](report-4/) | [`240003021_Atharva_Chavan_report4.pdf`](report-4/240003021_Atharva_Chavan_report4.pdf) |
+| 5 | BMP280 Sensor Data Reading for Pressure, Temperature and Altitude | [`report-5/`](report-5/) | [`240003021_Atharva_Chavan_report5.pdf`](report-5/240003021_Atharva_Chavan_report5.pdf) |
 
 ### Report 1 — Basic Operations Using GPIO: Blinking LEDs
 
@@ -72,11 +73,26 @@ on two boards:
 | [`report-4/dht11_sensor_report.tex`](report-4/dht11_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
 | [`report-4/figures/`](report-4/figures/) | Photographs of the setups and the module, and stills (Pi terminal, phone page, Arduino IDE) taken from the demonstration videos |
 
+### Report 5 — BMP280 Sensor Data Reading for Pressure, Temperature and Altitude
+
+A BMP280 barometric sensor read over I²C (address 0x76) on two boards:
+
+1. **Raspberry Pi 4** (10 September 2026) — `adafruit_bmp280` on bus 1 (GPIO2/GPIO3), printing temperature, pressure and pressure-altitude every second; the 14 readings recorded on video (≈929.3 hPa, ≈719 m, 31.4 → 30.1 °C) are tabulated and plotted.
+2. **ESP32** (3 September 2026) — the Adafruit BMP280 library on GPIO21/22, with the board running as a Wi-Fi access point and serving a live dashboard at `192.168.4.1` (a JSON endpoint polled every second): ≈940.2 hPa, ≈627 m, 24.5 °C.
+
+The report also works through why the same room reads 719 m on one day and 627 m on another (pressure altitude vs. the day's sea-level pressure).
+
+| Path | Description |
+|---|---|
+| [`report-5/240003021_Atharva_Chavan_report5.pdf`](report-5/240003021_Atharva_Chavan_report5.pdf) | The compiled report (7 pages) |
+| [`report-5/bmp280_sensor_report.tex`](report-5/bmp280_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`report-5/figures/`](report-5/figures/) | Photographs of the setups and the module, and stills (Pi editor/terminal, ESP32 dashboard) taken from the demonstration videos |
+
 ## Code
 
 [`code/`](code/) holds the source for every experiment, on both boards —
 Python for the Raspberry Pi and Arduino sketches for the ESP32 (Reports 2
-and 3 use the Raspberry Pi only; Report 4 uses both). See
+and 3 use the Raspberry Pi only; Reports 1, 4 and 5 use both). See
 [`code/README.md`](code/README.md) for the file-by-file listing, the pin
 assignments and the wiring notes.
 
@@ -93,7 +109,7 @@ Each report builds from inside its own directory, where the LaTeX source sits
 alongside its `figures/`:
 
 ```bash
-cd report-1   # or report-2, report-3, report-4
+cd report-1   # or report-2 ... report-5
 pdflatex *.tex
 pdflatex *.tex     # second pass resolves references
 ```

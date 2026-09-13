@@ -1,9 +1,9 @@
 # AA303 — IoT for Space Applications
-## Source code — shared by Lab Reports 1 to 4
+## Source code — shared by Lab Reports 1 to 5
 
 Chavan Atharva Sunil · 240003021
 
-Source code for all four lab reports. Each file corresponds to a listing in
+Source code for all five lab reports. Each file corresponds to a listing in
 one or more reports:
 
 - [`../report-1/`](../report-1/) — Basic Operations Using GPIO: Blinking LEDs
@@ -16,6 +16,9 @@ one or more reports:
 - [`../report-4/`](../report-4/) — DHT11 Sensor Data Reading for Temperature
   and Humidity (single-wire sensor: `adafruit_dht` on the Raspberry Pi, and an
   ESP32 web page served from its own access point)
+- [`../report-5/`](../report-5/) — BMP280 Sensor Data Reading for Pressure,
+  Temperature and Altitude (I²C sensor: `adafruit_bmp280` on the Raspberry Pi,
+  and a live ESP32 web dashboard served from its own access point)
 
 ---
 
@@ -29,6 +32,7 @@ one or more reports:
 | `raspberry-pi/pwm_two_levels.py` | Report 3 Listing 1 | Eight LEDs on software PWM at 200 Hz: LEDs 1–4 held at 100 % duty cycle, LEDs 5–8 at 10 % |
 | `raspberry-pi/pwm_wave.py` | Report 3 Listing 2 | A wave of brightness along the eight LEDs: each fades 0 → 100 → 0 % over 3.2 s, then dark for 3.2 s, staggered 0.8 s apart |
 | `raspberry-pi/dht.py` | Report 4 Listing 2 | Reads a DHT11 on GPIO2 every 2 s with `adafruit_dht` and prints temperature and humidity; failed frames are reported and retried |
+| `raspberry-pi/pressure.py` | Report 5 Listing 2 | Reads a BMP280 over I²C (0x76) every second with `adafruit_bmp280` and prints temperature, pressure and altitude (sea-level reference 1013.25 hPa) |
 
 Run from the terminal:
 
@@ -54,6 +58,12 @@ module (BCM names, so `board.D2` is GPIO2 at physical pin 3) and the
 `sudo apt install libgpiod2` and `pip3 install adafruit-circuitpython-dht`,
 and make sure I²C is disabled in `raspi-config` so GPIO2 is free.
 
+`pressure.py` also uses CircuitPython (`board`, `busio`) with the
+`adafruit_bmp280` driver over I²C. Here I²C must be **enabled** in
+`raspi-config` (the opposite of `dht.py`, since the BMP280 uses GPIO2/GPIO3
+as SDA/SCL); `i2cdetect -y 1` should show the sensor at `0x76`. Install with
+`pip3 install adafruit-circuitpython-bmp280`.
+
 ---
 
 ### ESP32 (Arduino C++)
@@ -64,6 +74,7 @@ and make sure I²C is disabled in `raspi-config` so GPIO2 is free.
 | `esp32/sequential_leds/` | — | One LED ON at a time (the ESP32 version described in §3.3) |
 | `esp32/binary_leds/` | Report 1 Listing 5 | Eight LEDs display a number entered on the Serial Monitor. Reports 2 and 3 cover the Raspberry Pi only. |
 | `esp32/dht11_web/` | Report 4 Listing 3 | Reads a DHT11 on GPIO4 and serves the values as a web page from the ESP32's own Wi-Fi access point `ESP32_DHT11` at `http://192.168.4.1` (page refreshes every 2 s) |
+| `esp32/bmp280_web_dashboard/` | Report 5 Listing 3 | Reads a BMP280 over I²C and serves a live dashboard from the access point `ESP32-Sensor` at `http://192.168.4.1`; `/data` returns JSON polled every second |
 
 Each sketch sits in its own folder, as the Arduino IDE requires. Open the
 `.ino`, select **ESP32 Dev Module** and the correct COM port, then upload.
@@ -76,10 +87,18 @@ DHT11 web page: signal on GPIO 4; needs the "DHT sensor library" by Adafruit
 from the Library Manager. After upload, open the Serial Monitor (115200 baud)
 to see the network name and address, join the `ESP32_DHT11` network from a
 phone and open `http://192.168.4.1`.
+BMP280 dashboard: SDA on GPIO 21, SCL on GPIO 22; needs the "Adafruit BMP280
+Library" (with Adafruit Unified Sensor and BusIO). Join the `ESP32-Sensor`
+network and open `http://192.168.4.1`.
 
 ---
 
 ### Wiring
+
+**BMP280 (Report 5):** the six-pin breakout's VCC, GND, SDA and SCL go to
+pin 1 (3.3 V), pin 6 (GND), pin 3 (GPIO2) and pin 5 (GPIO3) of the Pi's
+header, or to 3V3, GND, GPIO21 and GPIO22 on the ESP32; CSB and SDO are left
+unconnected (I²C mode, address 0x76). The pull-ups are on the module.
 
 **DHT11 (Report 4):** the HW-481 module's `+`, `S` and `-` pins go to
 pin 1 (3.3 V), pin 3 (GPIO2) and pin 6 (GND) of the Pi's header, or to 3V3,
