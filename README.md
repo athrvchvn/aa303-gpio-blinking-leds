@@ -60,24 +60,23 @@ controlled by software PWM from the GPIO pins of a Raspberry Pi (`RPi.GPIO`,
 
 ### Report 4 — DHT11 Sensor Data Reading for Temperature and Humidity
 
-Experiment performed 10 September 2026. A DHT11 sensor (HW-481 three-pin
-module) is read over its single-wire interface from GPIO2 of a Raspberry Pi 4
-using the `adafruit_dht` library. The program prints temperature and relative
-humidity every two seconds; the 18 readings recorded on video (30.9 → 28.7 °C,
-46 → 53 % RH) are tabulated and plotted in the report, along with the four
-checksum/incomplete-frame errors the library reported and retried.
+A DHT11 sensor (HW-481 three-pin module) read over its single-wire interface
+on two boards:
+
+1. **Raspberry Pi 4** (10 September 2026) — `adafruit_dht` on GPIO2, printing temperature and relative humidity every two seconds; the 18 readings recorded on video (30.9 → 28.7 °C, 46 → 53 % RH) are tabulated and plotted, along with the four checksum/incomplete-frame errors the library reported and retried.
+2. **ESP32** (3 September 2026) — the Adafruit DHT library on GPIO4, with the board running as a Wi-Fi access point (`ESP32_DHT11`) and serving the readings as a web page at `192.168.4.1`, viewed on a phone (26.10 °C, 55.80 %).
 
 | Path | Description |
 |---|---|
-| [`report-4/240003021_Atharva_Chavan_report4.pdf`](report-4/240003021_Atharva_Chavan_report4.pdf) | The compiled report (6 pages) |
+| [`report-4/240003021_Atharva_Chavan_report4.pdf`](report-4/240003021_Atharva_Chavan_report4.pdf) | The compiled report (8 pages) |
 | [`report-4/dht11_sensor_report.tex`](report-4/dht11_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`report-4/figures/`](report-4/figures/) | Photographs of the setup and the module, and terminal stills taken from the demonstration videos |
+| [`report-4/figures/`](report-4/figures/) | Photographs of the setups and the module, and stills (Pi terminal, phone page, Arduino IDE) taken from the demonstration videos |
 
 ## Code
 
 [`code/`](code/) holds the source for every experiment, on both boards —
-Python for the Raspberry Pi and Arduino sketches for the ESP32 (Reports 2,
-3 and 4 use the Raspberry Pi only). See
+Python for the Raspberry Pi and Arduino sketches for the ESP32 (Reports 2
+and 3 use the Raspberry Pi only; Report 4 uses both). See
 [`code/README.md`](code/README.md) for the file-by-file listing, the pin
 assignments and the wiring notes.
 

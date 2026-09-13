@@ -14,7 +14,8 @@ one or more reports:
 - [`../report-3/`](../report-3/) — Pulse Width Modulation Using GPIO
   (eight LEDs dimmed by software PWM, on the Raspberry Pi only)
 - [`../report-4/`](../report-4/) — DHT11 Sensor Data Reading for Temperature
-  and Humidity (single-wire sensor read with `adafruit_dht`, Raspberry Pi only)
+  and Humidity (single-wire sensor: `adafruit_dht` on the Raspberry Pi, and an
+  ESP32 web page served from its own access point)
 
 ---
 
@@ -61,7 +62,8 @@ and make sure I²C is disabled in `raspi-config` so GPIO2 is free.
 |---|---|---|
 | `esp32/blink_all_leds/` | Listing 2 | Four LEDs blink simultaneously, 1 s ON / 1 s OFF |
 | `esp32/sequential_leds/` | — | One LED ON at a time (the ESP32 version described in §3.3) |
-| `esp32/binary_leds/` | Report 1 Listing 5 | Eight LEDs display a number entered on the Serial Monitor. Reports 2, 3 and 4 cover the Raspberry Pi only. |
+| `esp32/binary_leds/` | Report 1 Listing 5 | Eight LEDs display a number entered on the Serial Monitor. Reports 2 and 3 cover the Raspberry Pi only. |
+| `esp32/dht11_web/` | Report 4 Listing 3 | Reads a DHT11 on GPIO4 and serves the values as a web page from the ESP32's own Wi-Fi access point `ESP32_DHT11` at `http://192.168.4.1` (page refreshes every 2 s) |
 
 Each sketch sits in its own folder, as the Arduino IDE requires. Open the
 `.ino`, select **ESP32 Dev Module** and the correct COM port, then upload.
@@ -70,14 +72,19 @@ ending set to **Newline**, then type a number from 0 to 255.
 
 Blink pins: GPIO 2, 4, 5, 18.
 Binary pins: GPIO 23, 22, 21, 19, 18, 5, 4, 2 (most significant bit first).
+DHT11 web page: signal on GPIO 4; needs the "DHT sensor library" by Adafruit
+from the Library Manager. After upload, open the Serial Monitor (115200 baud)
+to see the network name and address, join the `ESP32_DHT11` network from a
+phone and open `http://192.168.4.1`.
 
 ---
 
 ### Wiring
 
 **DHT11 (Report 4):** the HW-481 module's `+`, `S` and `-` pins go to
-pin 1 (3.3 V), pin 3 (GPIO2) and pin 6 (GND) of the header; the module
-carries its own 10 kΩ pull-up, so no other parts are needed.
+pin 1 (3.3 V), pin 3 (GPIO2) and pin 6 (GND) of the Pi's header, or to 3V3,
+GPIO4 and GND on the ESP32; the module carries its own 10 kΩ pull-up, so no
+other parts are needed.
 
 The LEDs are connected **directly** to the GPIO pins, with no series
 resistors — each LED anode to its pin, and all cathodes to a common ground

@@ -51,7 +51,7 @@
 \newcommand{\studentname}{Chavan Atharva Sunil}
 \newcommand{\rollnumber}{240003021}
 \newcommand{\coursecode}{AA303 --- IoT for Space Applications}
-\newcommand{\expdate}{10 September 2026}   % <-- CHECK THIS DATE
+\newcommand{\expdate}{10 September 2026 (Raspberry Pi) and 3 September 2026 (ESP32)}   % <-- CHECK THESE DATES
 
 %  Google Drive folder holding the demonstration videos and the source code
 \urldef{\drivefolder}\url{https://drive.google.com/drive/folders/11TP-NX_EF_IpxHlAUYmG8YWPQfst2ae2?usp=sharing}
@@ -154,14 +154,15 @@
 %==============================================================================
 %  Schematic: Raspberry Pi header -> HW-481 (DHT11) module
 %==============================================================================
-\newcommand{\dhtschematic}{%
-\begin{circuitikz}[scale=0.9, transform shape, every node/.style={font=\footnotesize}]
-  % ---- Raspberry Pi header
+% \dhtschematic{board}{vcc pin}{data pin}{gnd pin}
+\newcommand{\dhtschematic}[4]{%
+\begin{circuitikz}[scale=0.74, transform shape, every node/.style={font=\footnotesize}]
+  % ---- controller header
   \draw[fill=accentlt, draw=accent, line width=0.9pt, rounded corners=4pt]
         (-3.6,-0.35) rectangle (-0.6,3.6);
-  \node[text=accent, font=\small\bfseries] at (-2.1,3.1) {Raspberry Pi};
+  \node[text=accent, font=\small\bfseries] at (-2.1,3.1) {#1};
   \node[text=cmnt,   font=\scriptsize]     at (-2.1,2.7) {GPIO header};
-  \foreach \y/\pin/\name in {2.0/Pin 1/3.3\,V, 1.1/Pin 3/GPIO2, 0.2/Pin 6/GND}{
+  \foreach \y/\pin/\name in {2.0/#2/3.3\,V, 1.1/#3/data, 0.2/#4/GND}{
      \draw[fill=white, draw=accent, line width=0.6pt] (-0.92,\y-0.14) rectangle (-0.6,\y+0.14);
      \node[anchor=east, font=\scriptsize\bfseries, text=accent, align=right] at (-1.02,\y) {\pin\\[-2pt]{\tiny\color{cmnt}\name}};}
   % ---- wires (colour-coded like the jumper leads used)
@@ -207,7 +208,7 @@
  \noindent{\Large\bfseries Experiment 4 \,\textbar\, Lab Report}\\[8pt]
  \noindent{\huge\bfseries DHT11 Sensor Data Reading}\\[6pt]
  \noindent{\huge\bfseries for Temperature and Humidity}\\[10pt]
- \noindent{\small Reading a digital temperature and humidity sensor over a single GPIO pin of a Raspberry Pi}
+ \noindent{\small Reading a digital temperature and humidity sensor over a single GPIO pin --- printed on a Raspberry Pi terminal, and served by an ESP32 as a web page}
 }
 \vspace{1.5cm}
 
@@ -217,7 +218,7 @@
 Submitted by  & \studentname \\
 Roll Number   & \rollnumber \\
 Date of Experiment & \expdate \\
-Board Used    & Raspberry Pi 4 (BCM numbering, GPIO2 / physical pin 3) \\
+Boards Used   & Raspberry Pi 4 (GPIO2, physical pin 3) and ESP32 DevKit (GPIO4) \\
 \bottomrule
 \end{tabularx}
 
@@ -229,9 +230,11 @@ Board Used    & Raspberry Pi 4 (BCM numbering, GPIO2 / physical pin 3) \\
 \begin{keybox}
 To measure \textbf{temperature} and \textbf{relative humidity} with a \textbf{DHT11}
 sensor connected to a GPIO pin of a \textbf{Raspberry Pi}. The sensor delivers both
-quantities as a digital 40-bit frame over a single data wire; the program on the Pi
-requests a reading every two seconds, decodes the frame, checks it, and prints the
-temperature in $^{\circ}\mathrm{C}$ and the humidity in \% to the terminal.
+quantities as a digital 40-bit frame over a single data wire. In \textbf{Part A} a
+program on the Pi requests a reading every two seconds, decodes the frame, checks it,
+and prints the temperature in $^{\circ}\mathrm{C}$ and the humidity in \% to the
+terminal. In \textbf{Part B} the same sensor is read by an \textbf{ESP32}, which hosts
+its own Wi-Fi network and serves the two values as a web page to a phone.
 \end{keybox}
 
 \subsection*{Objectives}
@@ -244,6 +247,8 @@ temperature in $^{\circ}\mathrm{C}$ and the humidity in \% to the terminal.
         print a continuous stream of temperature and humidity values.
   \item To observe how the readings behave over time, including the occasional failed
         read that the protocol's checksum detects.
+  \item To read the same sensor from an ESP32 with the Arduino DHT library and publish
+        the values over Wi-Fi as a web page, so that they can be viewed on a phone.
 \end{itemize}
 
 \subsection*{Brief Theory}
@@ -324,7 +329,8 @@ resistor on the data line, so no external resistor was needed. The data pin was
 connected to \textbf{GPIO2} (physical pin~3). This pin doubles as the I$^2$C SDA line,
 so the I$^2$C interface must be disabled in \texttt{raspi-config} for the pin to be free
 as a GPIO; it also carries the Pi's own fixed $1.8\,\mathrm{k}\Omega$ pull-up to
-$3.3\,\mathrm{V}$, which the DHT11 tolerates.
+$3.3\,\mathrm{V}$, which the DHT11 tolerates. On the ESP32 any free GPIO can be used;
+GPIO4 was used here.
 \end{notebox}
 
 %------------------------------------------------------------------ 2. MATERIALS
@@ -337,12 +343,13 @@ $3.3\,\mathrm{V}$, which the DHT11 tolerates.
 \rowcolor{soft}
 \multicolumn{1}{@{}l}{\textbf{\#}} & \textbf{Component} & \textbf{Qty.} & \textbf{Purpose in the setup} \\
 \midrule
-1 & Raspberry Pi 4 (in case, with SD card, OS installed) & 1 & Host board; drives the single-wire bus and runs the program \\
-2 & DHT11 sensor module, HW-481 (3-pin, with pull-up)  & 1 & Measures temperature and relative humidity \\
-3 & Female--female jumper wires                           & 3 & Supply, data and ground between the header and the module \\
-4 & USB-C power supply                                    & 1 & Powering the Raspberry Pi \\
-5 & Monitor, keyboard and mouse                           & 1 & Running the program and reading the terminal \\
-6 & Software: Python 3, \texttt{adafruit-circuitpython-dht}, \texttt{libgpiod2} & --- & Library that implements the DHT11 protocol \\
+1 & Raspberry Pi 4 (in case, with SD card, OS installed) & 1 & Part A host; drives the single-wire bus and prints to the terminal \\
+2 & ESP32 DevKit (30-pin)                                  & 1 & Part B host; reads the sensor and serves the web page over Wi-Fi \\
+3 & DHT11 sensor module, HW-481 (3-pin, with pull-up)  & 1 & Measures temperature and relative humidity; shared by both parts \\
+4 & Female--female jumper wires                           & 3 & Supply, data and ground between the header and the module \\
+5 & USB-C power supply, monitor, keyboard and mouse       & 1 & Running and observing the Raspberry Pi \\
+6 & Micro-USB cable, laptop with Arduino IDE, and a phone with Wi-Fi & 1 & Programming the ESP32 and viewing its page \\
+7 & Software: \texttt{adafruit-circuitpython-dht} + \texttt{libgpiod2} (Pi); \texttt{DHT sensor library} by Adafruit (Arduino) & --- & Libraries that implement the DHT11 protocol \\
 \bottomrule
 \end{tabularx}
 
@@ -350,13 +357,16 @@ $3.3\,\mathrm{V}$, which the DHT11 tolerates.
 \section{Methodology}
 
 No breadboard was needed: the module's three pins were connected straight to the
-Raspberry Pi's header with three jumper wires --- supply to the $3.3\,\mathrm{V}$ pin,
-ground to a GND pin, and the signal pin to GPIO2. The Adafruit DHT library was
-installed, and a short Python program was written that creates a \texttt{DHT11} object
-on \texttt{board.D2}, then loops forever reading \texttt{temperature} and
-\texttt{humidity} from it every two seconds and printing them. Failed reads --- which
-the library reports as a \texttt{RuntimeError} when the checksum does not match or the
+board's header with three jumper wires --- supply to $3.3\,\mathrm{V}$, ground to GND,
+and the signal pin to one GPIO. \textbf{Part A} used the Raspberry Pi: the Adafruit DHT
+library was installed, and a short Python program creates a \texttt{DHT11} object on
+\texttt{board.D2}, then loops forever reading \texttt{temperature} and
+\texttt{humidity} every two seconds and printing them. Failed reads --- which the
+library reports as a \texttt{RuntimeError} when the checksum does not match or the
 frame is incomplete --- are caught, printed, and simply retried on the next cycle.
+\textbf{Part B} moved the same module to an ESP32: an Arduino sketch reads it with the
+Adafruit \texttt{DHT} library, starts the ESP32 as a Wi-Fi access point, and answers
+web requests with a page containing the current values, which was opened on a phone.
 
 \subsection{Connections}
 
@@ -364,14 +374,14 @@ frame is incomplete --- are caught, printed, and simply retried on the next cycl
 \noindent
 \begin{minipage}[t]{0.5\textwidth}
 \vspace{0pt}
-\begin{tabularx}{\linewidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
 \toprule
 \rowcolor{soft}
-\textbf{Module pin} & \textbf{Raspberry Pi} & \textbf{Jumper} \\
+\textbf{Module pin} & \textbf{Raspberry Pi (Part A)} & \textbf{ESP32 (Part B)} \\
 \midrule
-$+$ (VCC)    & Pin 1 --- $3.3\,\mathrm{V}$     & red \\
-S (signal)   & Pin 3 --- GPIO2 (\texttt{board.D2}) & purple \\
-$-$ (GND)    & Pin 6 --- GND                   & black \\
+$+$ (VCC)    & Pin 1 --- $3.3\,\mathrm{V}$ (red) & 3V3 \\
+S (signal)   & Pin 3 --- GPIO2 (purple)          & GPIO4 \\
+$-$ (GND)    & Pin 6 --- GND (black)             & GND \\
 \bottomrule
 \end{tabularx}
 \end{minipage}\hfill
@@ -389,15 +399,22 @@ the header.
 
 \begin{figure}[htb]
 \centering
-\dhtschematic
-\caption{Circuit schematic. The HW-481 module needs only supply, ground and one data
-line; its on-board $10\,\mathrm{k}\Omega$ resistor holds the data line HIGH when neither
-side is driving it.}
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\dhtschematic{Raspberry Pi}{Pin 1}{Pin 3}{Pin 6}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\dhtschematic{ESP32}{3V3}{GPIO4}{GND}
+\end{minipage}
+\caption{Circuit schematics for Part A (left) and Part B (right). The HW-481 module
+needs only supply, ground and one data line; its on-board $10\,\mathrm{k}\Omega$
+resistor holds the data line HIGH when neither side is driving it.}
 \label{fig:schematic}
 \end{figure}
 
 \Needspace{12\baselineskip}
-\subsection{Software setup}
+\subsection{Part A --- Raspberry Pi, readings on the terminal}
 
 The \texttt{adafruit\_dht} library implements the microsecond-level protocol of
 Figure~\ref{fig:protocol} in native code, so the Python program only has to ask for a
@@ -410,26 +427,9 @@ pip3 install adafruit-circuitpython-dht
 
 \noindent The library depends on Adafruit \emph{Blinka}, which provides the
 \texttt{board} module that maps names such as \texttt{D2} to the Pi's GPIO pins.
+The program itself is Listing~\ref{lst:dht}.
 
-\subsection{Procedure}
-\begin{enumerate}
-  \item With the Raspberry Pi powered off, the module's $+$, S and $-$ pins were
-        connected with three jumper wires to pin~1 ($3.3\,\mathrm{V}$), pin~3 (GPIO2) and
-        pin~6 (GND) of the header, and the connections were checked against the pinout.
-  \item The Pi was booted, the I$^2$C interface was confirmed to be disabled, and the
-        library of Listing~\ref{lst:install} was installed.
-  \item The program of Listing~\ref{lst:dht} was saved as \texttt{dht.py} and started
-        from the terminal with \texttt{python3 dht.py}.
-  \item The terminal was observed while the program printed a new temperature and
-        humidity pair every two seconds; the readings were recorded on video, together
-        with the error lines produced whenever a frame failed its checksum.
-  \item The program was stopped with \texttt{Ctrl+C}, which releases the sensor and
-        the GPIO pin.
-\end{enumerate}
-
-\Needspace{24\baselineskip}
-\subsection{Code (Python, Raspberry Pi)}
-
+\Needspace{18\baselineskip}
 \begin{lstlisting}[language=Python, caption={Reading the DHT11 every two seconds and printing temperature and humidity.}, label={lst:dht}]
 import time
 import board
@@ -459,20 +459,128 @@ finally:
     dht.exit()                                 # release the pin and the sensor
 \end{lstlisting}
 
+
+\subsection{Part B --- ESP32, readings on a web page}
+
+On the ESP32 the sensor is read with the Arduino \emph{DHT sensor library} by Adafruit
+(installed from the IDE's Library Manager), whose \texttt{readTemperature()} and
+\texttt{readHumidity()} return \texttt{NaN} when a frame fails its checksum. Rather
+than printing to the serial monitor, the sketch (Listing~\ref{lst:esp}) turns the ESP32
+into a Wi-Fi \textbf{access point} named \texttt{ESP32\_DHT11} and runs a web server on
+it. Every request for \texttt{/} triggers a fresh read of the sensor and returns a
+small HTML page with the two values --- or ``Sensor Error!'' if the read failed --- and
+the page asks the browser to reload itself every two seconds. A phone joined to the
+ESP32's network and opened \texttt{http://192.168.4.1}, the access point's address,
+which the sketch also prints on the Serial Monitor at start-up.
+
+\Needspace{18\baselineskip}
+\begin{lstlisting}[language=C++, caption={Part B --- ESP32 sketch: the DHT11 readings served as a web page from the board's own access point.}, label={lst:esp}]
+#include <WiFi.h>
+#include <WebServer.h>
+#include <DHT.h>
+
+#define DHTPIN  4                       // DHT11 signal pin
+#define DHTTYPE DHT11
+
+const char *AP_SSID = "ESP32_DHT11";    // the ESP32 creates this Wi-Fi network
+const char *AP_PASS = "12345678";
+
+DHT dht(DHTPIN, DHTTYPE);
+WebServer server(80);
+
+void handleRoot() {                     // called for every request of "/"
+  float temperature = dht.readTemperature();   // degrees Celsius, NaN on a bad frame
+  float humidity = dht.readHumidity();         // percent
+
+  String html = "<!DOCTYPE html><html><head><meta charset='utf-8'>";
+  html += "<meta http-equiv='refresh' content='2'>";       // reload every 2 s
+  html += "<title>ESP32 DHT11</title></head><body>";
+  html += "<h1>ESP32 DHT11 Sensor</h1>";
+
+  if (isnan(temperature) || isnan(humidity)) {
+    html += "<h2>Sensor Error!</h2>";
+  }
+  else {
+    html += "<h2>Temperature: ";
+    html += String(temperature);
+    html += " &deg;C</h2>";
+
+    html += "<h2>Humidity: ";
+    html += String(humidity);
+    html += " %</h2>";
+  }
+
+  html += "</body>";
+  html += "</html>";
+
+  server.send(200, "text/html", html);
+}
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  WiFi.softAP(AP_SSID, AP_PASS);        // start the access point
+  Serial.println("Wi-Fi started!");
+  Serial.print("Network: ");            Serial.println(AP_SSID);
+  Serial.print("ESP32 IP address: ");   Serial.println(WiFi.softAPIP());   // 192.168.4.1
+
+  server.on("/", handleRoot);
+  server.begin();
+  Serial.println("Web server started!");
+}
+
+void loop() {
+  server.handleClient();
+}
+\end{lstlisting}
+
+\subsection{Procedure}
+\begin{enumerate}
+  \item \textbf{Part A.} With the Raspberry Pi powered off, the module's $+$, S and $-$
+        pins were connected with three jumper wires to pin~1 ($3.3\,\mathrm{V}$), pin~3
+        (GPIO2) and pin~6 (GND) of the header, and the connections were checked against
+        the pinout.
+  \item The Pi was booted, the I$^2$C interface was confirmed to be disabled, and the
+        library of Listing~\ref{lst:install} was installed.
+  \item The program of Listing~\ref{lst:dht} was saved as \texttt{dht.py} and started
+        from the terminal with \texttt{python3 dht.py}.
+  \item The terminal was observed while the program printed a new temperature and
+        humidity pair every two seconds; the readings were recorded on video, together
+        with the error lines produced whenever a frame failed its checksum.
+  \item The program was stopped with \texttt{Ctrl+C}, which releases the sensor and
+        the GPIO pin.
+  \item \textbf{Part B.} The module was moved to the ESP32 ($+$ to 3V3, $-$ to GND,
+        S to GPIO4). In the Arduino IDE the ESP32 board package and the Adafruit DHT
+        library were installed, Listing~\ref{lst:esp} was uploaded to the board on its
+        COM port, and the Serial Monitor showed the network name and the address
+        \texttt{192.168.4.1}.
+  \item A phone was connected to the \texttt{ESP32\_DHT11} network and the address
+        opened in its browser; the page showed the temperature and humidity and
+        refreshed itself every two seconds. This was recorded on video.
+\end{enumerate}
+
+
+
+
+
+
 %------------------------------------------------------------------ 4. RESULT
 \Needspace{16\baselineskip}
 \section{Result and Output}
 
 \begin{keybox}
-The sensor was read successfully over the single data wire. The program printed a
-temperature and humidity pair every two seconds; over the recorded run of
-\textbf{18 readings} the temperature fell steadily from $30.9$ to
-$28.7\,^{\circ}\mathrm{C}$ while the relative humidity rose from $46$ to $53\,\%$.
-Four attempts in the same run failed the checksum or returned an incomplete frame;
-each was reported by the program and the next read succeeded.
+The sensor was read successfully over the single data wire on both boards. In
+\textbf{Part A} the Raspberry Pi printed a temperature and humidity pair every two
+seconds; over the recorded run of \textbf{18 readings} the temperature fell steadily
+from $30.9$ to $28.7\,^{\circ}\mathrm{C}$ while the relative humidity rose from $46$ to
+$53\,\%$. Four attempts in the same run failed the checksum or returned an incomplete
+frame; each was reported by the program and the next read succeeded. In
+\textbf{Part B} the ESP32 served its page at \texttt{192.168.4.1}, and the phone showed
+$\mathbf{26.10\,^{\circ}C}$ \textbf{and} $\mathbf{55.80\,\%}$ in the lab.
 \end{keybox}
 
-\subsection*{Observed outputs}
+\subsection*{Observed outputs --- Part A, Raspberry Pi terminal}
 
 \vspace{2pt}
 \noindent
@@ -602,6 +710,50 @@ carrying the blue DHT11 and its pull-up resistor.}
 \label{fig:setup}
 \end{figure}
 
+\subsection*{Observed output --- Part B, ESP32 web page}
+
+\vspace{2pt}
+\noindent
+\begin{tabularx}{\textwidth}{@{}c l l X@{}}
+\toprule
+\rowcolor{soft}
+\textbf{Output} & \textbf{Where} & \textbf{Value shown} & \textbf{Remark} \\
+\midrule
+4 & Phone browser at \texttt{http://192.168.4.1} & $26.10\,^{\circ}\mathrm{C}$, $55.80\,\%$ &
+    page titled ``ESP32 DHT11 Sensor'', served by the ESP32 access point \texttt{ESP32\_DHT11}; refreshes every 2\,s \\
+5 & Arduino Serial Monitor & \texttt{ESP32 IP address: 192.168.4.1} &
+    printed by the sketch after \texttt{Wi-Fi started!} and before \texttt{Web server started!} \\
+\bottomrule
+\end{tabularx}
+
+\vspace{6pt}
+\noindent The ESP32 run took place in the air-conditioned lab on a different day from
+Part A, which is why its reading ($26.1\,^{\circ}\mathrm{C}$, $55.8\,\%$) does not match
+the Pi's; the DHT11's specified accuracy is $\pm2\,^{\circ}\mathrm{C}$ and $\pm5\,\%$
+RH in any case.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.56\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{figures/esp32_phone_page.jpg}\\[5pt]
+\includegraphics[width=\linewidth]{figures/esp32_ide_serial.jpg}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.41\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{figures/esp32_dht11_board.jpg}
+\end{minipage}
+\caption{Part B. \emph{Top left:} the page served by the ESP32, opened on a phone at
+\texttt{192.168.4.1} --- ``Temperature: 26.10 $^{\circ}$C, Humidity: 55.80 \%''.
+\emph{Bottom left:} the Arduino IDE with the sketch's page-building code and, in the
+Serial Monitor, the start-up messages \texttt{Wi-Fi started!}, \texttt{Network:
+ESP32\_DHT11}, \texttt{ESP32 IP address: 192.168.4.1}, \texttt{Web server started!}.
+\emph{Right:} the ESP32 DevKit with the DHT11 module on three jumper wires.}
+\label{fig:esp}
+\end{figure}
+
 \subsection*{Video demonstration and code}
 
 \begin{titledbox}[before skip=6pt]{Google Drive link}
@@ -647,7 +799,15 @@ available in the following shared folder:
         board pull-up (say GPIO4) only the module's resistor would be present.
   \item \textbf{Sampling rate.} The two-second delay is not just politeness: the
         DHT11 needs at least a second between conversions, and reading it faster
-        returns stale or invalid data.
+        returns stale or invalid data. On the ESP32 the page's two-second refresh
+        serves the same purpose, since each page load triggers one read.
+  \item \textbf{Serving the data instead of printing it.} The ESP32 has no screen,
+        but it has Wi-Fi. Running it as an access point means the phone talks to it
+        directly, without any router, at the fixed address \texttt{192.168.4.1}; the web
+        page is built as a string on every request, so it is always current. The Arduino
+        library signals a failed frame by returning \texttt{NaN} rather than raising an
+        exception, which the sketch turns into the ``Sensor Error!'' line instead of
+        printing nonsense values.
 \end{itemize}
 
 %------------------------------------------------------------------ CONCLUSION
@@ -655,9 +815,9 @@ available in the following shared folder:
 \section{Conclusion}
 
 The experiment moved from driving outputs to \textbf{acquiring data}: a DHT11 sensor
-was read from a single GPIO pin of a Raspberry Pi, returning calibrated temperature
-and relative humidity as a checksummed digital frame, and the program printed a fresh
-pair of values every two seconds. Eighteen consecutive readings showed the sensor
+was read from a single GPIO pin --- of a Raspberry Pi, which printed a fresh pair of
+calibrated temperature and humidity values every two seconds, and of an ESP32, which
+served the same two values as a web page over its own Wi-Fi network to a phone. Eighteen consecutive readings showed the sensor
 settling from $30.9$ to $28.7\,^{\circ}\mathrm{C}$ with humidity rising from $46$ to
 $53\,\%$, the two quantities moving in opposite directions as the physics of relative
 humidity predicts, and the four frames that failed the checksum were detected and
@@ -665,7 +825,8 @@ discarded rather than reported as false values.
 
 The exercise showed the practical side of a digital sensor interface --- installing a
 driver library, the meaning of its error messages, and the timing limitations of a
-general-purpose operating system --- and it produces the kind of environmental data
-that an IoT node would log or transmit, which is where the following experiments lead.
+general-purpose operating system --- and, with the ESP32, took the first step from
+reading a sensor to \emph{publishing} its data over a network, which is what an IoT
+node does.
 
 \end{document}
