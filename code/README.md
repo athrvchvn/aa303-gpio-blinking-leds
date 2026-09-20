@@ -20,7 +20,7 @@ one or more reports:
   Temperature and Altitude (I²C sensor: `adafruit_bmp280` on the Raspberry Pi,
   and a live ESP32 web dashboard served from its own access point)
 - [`../Report 6 - IMU Sensor Data Reading for Inertial Navigation/`](../Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/) — IMU Sensor Data Reading for Inertial Navigation
-  (MPU6050 over I²C: `adafruit_mpu6050` on the Raspberry Pi, and a live ESP32
+  (MPU6050 over I²C: raw registers via `smbus2` on the Raspberry Pi, and a live ESP32
   dashboard of acceleration and angular velocity)
 
 ---
