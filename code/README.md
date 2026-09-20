@@ -36,7 +36,7 @@ one or more reports:
 | `raspberry-pi/pwm_wave.py` | Report 3 Listing 2 | A wave of brightness along the eight LEDs: each fades 0 → 100 → 0 % over 3.2 s, then dark for 3.2 s, staggered 0.8 s apart |
 | `raspberry-pi/dht.py` | Report 4 Listing 2 | Reads a DHT11 on GPIO2 every 2 s with `adafruit_dht` and prints temperature and humidity; failed frames are reported and retried |
 | `raspberry-pi/pressure.py` | Report 5 Listing 2 | Reads a BMP280 over I²C (0x76) every second with `adafruit_bmp280` and prints temperature, pressure and altitude (sea-level reference 1013.25 hPa) |
-| `raspberry-pi/imu.py` | Report 6 Listing 2 | Reads an MPU6050 over I²C (0x68) twice a second with `adafruit_mpu6050`; prints acceleration (g), gyro (°/s), |a|, tilt and temperature |
+| `raspberry-pi/imu.py` | Report 6 Listing 2 | Wakes the MPU6050 and prints its raw 16-bit accelerometer and gyroscope counts twice a second, read register by register with `smbus2` (16384 counts/g, 131 counts per °/s) |
 
 Run from the terminal:
 
@@ -103,8 +103,7 @@ network and open `http://192.168.4.1`.
 **MPU6050 / GY-521 (Report 6):** VCC, GND, SDA and SCL exactly as for the
 BMP280 below (same I²C pins on both boards); XDA, XCL, AD0 and INT are left
 unconnected, giving address 0x68. `imu.py` needs
-`pip3 install adafruit-circuitpython-mpu6050`; the sketch needs the
-"Adafruit MPU6050" library.
+`pip3 install smbus2`; the sketch needs the "Adafruit MPU6050" library.
 
 **BMP280 (Report 5):** the six-pin breakout's VCC, GND, SDA and SCL go to
 pin 1 (3.3 V), pin 6 (GND), pin 3 (GPIO2) and pin 5 (GPIO3) of the Pi's

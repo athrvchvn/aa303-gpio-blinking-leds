@@ -1,11 +1,10 @@
 """
-Experiment 6, Part A - MPU6050 IMU (GY-521) on the Raspberry Pi.
+Experiment 6, Part A - MPU6050 IMU (GY-521) on the Raspberry Pi, raw registers.
 
-Reads three-axis acceleration and angular velocity over I2C (bus 1: SDA = GPIO2 /
-pin 3, SCL = GPIO3 / pin 5, address 0x68) with adafruit_mpu6050, converts them to
-g and deg/s, and prints them twice a second together with the magnitude |a|
-(about 1 g at rest), the tilt angles derived from the accelerometer, and the
-chip temperature.
+Wakes the MPU6050 and prints the raw 16-bit accelerometer and gyroscope counts
+twice a second, read register by register over I2C bus 1 (SDA = GPIO2 / pin 3,
+SCL = GPIO3 / pin 5, address 0x68). Default ranges: 16384 counts per g and
+131 counts per deg/s, so a resting module shows |accel| ~ 16384.
 
 Wiring (module pin -> Raspberry Pi header):
     VCC -> pin 1, 3.3 V     SDA -> pin 3, GPIO2
@@ -13,35 +12,36 @@ Wiring (module pin -> Raspberry Pi header):
 
 Setup:   sudo raspi-config -> Interface Options -> I2C -> Enable
          sudo apt install i2c-tools && i2cdetect -y 1     (shows 0x68)
-         pip3 install adafruit-circuitpython-mpu6050
+         pip3 install smbus2
 Run:     python3 imu.py      (Ctrl+C to stop)
 """
 
 import time
-import math
-import board
-import busio
-import adafruit_mpu6050
+from smbus2 import SMBus
 
-G = 9.80665                              # m/s^2 per g
+MPU_ADDR   = 0x68        # GY-521 with AD0 low
+PWR_MGMT_1 = 0x6B        # power management: bit 6 = sleep
+ACCEL_XOUT = 0x3B        # six accelerometer bytes start here
+GYRO_XOUT  = 0x43        # six gyroscope bytes start here
 
-# Initialize I2C and the sensor (GY-521, AD0 low -> 0x68)
-i2c = busio.I2C(board.SCL, board.SDA)
-mpu = adafruit_mpu6050.MPU6050(i2c, address=0x68)
-mpu.accelerometer_range = adafruit_mpu6050.Range.RANGE_2_G
-mpu.gyro_range = adafruit_mpu6050.GyroRange.RANGE_250_DPS
+bus = SMBus(1)                                   # I2C bus 1: GPIO2 = SDA, GPIO3 = SCL
+bus.write_byte_data(MPU_ADDR, PWR_MGMT_1, 0)     # wake the chip (it boots asleep)
+
+def read_word(reg):
+    # signed 16-bit value from a high/low register pair
+    high = bus.read_byte_data(MPU_ADDR, reg)
+    low = bus.read_byte_data(MPU_ADDR, reg + 1)
+    value = (high << 8) | low
+    return value - 65536 if value > 32767 else value
 
 while True:
-    ax, ay, az = (v / G for v in mpu.acceleration)          # g
-    gx, gy, gz = (math.degrees(v) for v in mpu.gyro)        # deg/s
-    mag = math.sqrt(ax*ax + ay*ay + az*az)                  # should be ~1 g at rest
-    pitch = math.degrees(math.atan2(ax, math.sqrt(ay*ay + az*az)))
-    roll = math.degrees(math.atan2(ay, math.sqrt(ax*ax + az*az)))
+    ax = read_word(ACCEL_XOUT)                   # raw counts: 16384 per g
+    ay = read_word(ACCEL_XOUT + 2)
+    az = read_word(ACCEL_XOUT + 4)
+    gx = read_word(GYRO_XOUT)                    # raw counts: 131 per deg/s
+    gy = read_word(GYRO_XOUT + 2)
+    gz = read_word(GYRO_XOUT + 4)
 
-    print("------------------------------------------")
-    print(f"Accel  (g)    : X {ax:6.2f}  Y {ay:6.2f}  Z {az:6.2f}   |a| {mag:4.2f}")
-    print(f"Gyro   (deg/s): X {gx:7.2f} Y {gy:7.2f} Z {gz:7.2f}")
-    print(f"Tilt   (deg)  : pitch {pitch:6.1f}  roll {roll:6.1f}")
-    print(f"Temperature   : {mpu.temperature:.2f} C")
-
+    print(f"Accel: X= {ax:6d}, Y= {ay:6d}, Z= {az:6d}")
+    print(f"Gyro:  X= {gx:6d}, Y= {gy:6d}, Z= {gz:6d}")
     time.sleep(0.5)

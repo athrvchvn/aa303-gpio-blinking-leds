@@ -51,7 +51,7 @@
 \newcommand{\studentname}{Chavan Atharva Sunil}
 \newcommand{\rollnumber}{240003021}
 \newcommand{\coursecode}{AA303 --- IoT for Space Applications}
-\newcommand{\expdate}{10 September 2026}   % <-- CHECK THE PI DATE
+\newcommand{\expdate}{10 September 2026 (ESP32) and 20 September 2026 (Raspberry Pi)}
 
 %  Google Drive folder holding the demonstration videos and the source code
 \urldef{\drivefolder}\url{https://drive.google.com/drive/folders/1cdR2mrryf5j0LEnQgIgYEAs-zB0Qj0jO?usp=sharing}
@@ -362,7 +362,7 @@ Pi (I$^2$C must be enabled) and GPIO21/GPIO22 on the ESP32.
 4 & Female--female jumper wires                            & 4 & VCC, GND, SDA and SCL between header and module \\
 5 & Micro-USB cable, laptop with Arduino IDE, and a tablet or phone with Wi-Fi & 1 & Programming the ESP32 and viewing the dashboard \\
 6 & USB-C power supply, monitor, keyboard and mouse        & 1 & Running and observing the Raspberry Pi \\
-7 & Software: \texttt{adafruit-circuitpython-mpu6050} (Pi); \texttt{Adafruit MPU6050} library and ESP32 core (Arduino IDE) & --- & Sensor drivers on the two boards \\
+7 & Software: \texttt{smbus2} (Pi); \texttt{Adafruit MPU6050} library and ESP32 core (Arduino IDE) & --- & I$^2$C access on the Pi; sensor driver on the ESP32 \\
 \bottomrule
 \end{tabularx}
 
@@ -386,8 +386,8 @@ regulator are on the module.
 \midrule
 VCC & Pin 1 --- $3.3\,\mathrm{V}$ & 3V3 (red)            & Supply, through the module's regulator \\
 GND & Pin 6 --- GND               & GND (black)          & Ground \\
-SDA & Pin 3 --- GPIO2 (\texttt{board.SDA}) & GPIO21 (green) & Serial data, bidirectional \\
-SCL & Pin 5 --- GPIO3 (\texttt{board.SCL}) & GPIO22 (yellow) & Serial clock from the master \\
+SDA & Pin 3 --- GPIO2 (SDA1) & GPIO21 (green) & Serial data, bidirectional \\
+SCL & Pin 5 --- GPIO3 (SCL1) & GPIO22 (yellow) & Serial clock from the master \\
 XDA, XCL, AD0, INT & not connected & not connected & Auxiliary bus, address select (LOW $\Rightarrow$ \texttt{0x68}), interrupt \\
 \bottomrule
 \end{tabularx}
@@ -410,50 +410,53 @@ address-setting AD0 resistor are on the GY-521 module. Wire colours as used in P
 \subsection{Part A --- Raspberry Pi, readings on the terminal}
 
 With I$^2$C enabled, the sensor was confirmed on the bus with \texttt{i2cdetect -y 1}
-and the Adafruit CircuitPython driver installed:
+and the \texttt{smbus2} library installed:
 
 \begin{lstlisting}[language=bash, caption={Preparing the Raspberry Pi.}, label={lst:install}]
 sudo raspi-config          # Interface Options -> I2C -> Enable
 sudo apt install i2c-tools
 i2cdetect -y 1             # the MPU6050 shows up at 0x68
-pip3 install adafruit-circuitpython-mpu6050
+pip3 install smbus2
 \end{lstlisting}
 
-\noindent The program (Listing~\ref{lst:pi}) opens the bus, creates the sensor object,
-and loops twice a second reading the \texttt{acceleration} and \texttt{gyro} tuples
-(in m/s$^2$ and rad/s, which it converts to $g$ and $^{\circ}$/s to match the ESP32
-dashboard), plus the temperature, and computes the magnitude $|\mathbf{f}|$ and the
-tilt angles so that the rest test of the theory section can be checked at a glance.
+\noindent The program (Listing~\ref{lst:pi}) talks to the chip at register level
+with \texttt{smbus2}: it clears the sleep bit in the power-management register to wake
+the MPU6050, then twice a second reads the six 16-bit accelerometer and gyroscope
+registers (each a signed high/low byte pair) and prints the \emph{raw counts}. With
+the default ranges these convert as $16384$ counts per $g$ and $131$ counts per
+$^{\circ}$/s, which is done in the results section rather than in the program, so
+that the terminal shows exactly what the sensor registers contain.
 
 \Needspace{18\baselineskip}
-\begin{lstlisting}[language=Python, caption={Part A --- \texttt{imu.py} on the Raspberry Pi: acceleration, angular velocity, tilt and temperature twice a second.}, label={lst:pi}]
+\begin{lstlisting}[language=Python, caption={Part A --- \texttt{imu.py} on the Raspberry Pi: raw accelerometer and gyroscope registers of the MPU6050 read over I$^2$C.}, label={lst:pi}]
 import time
-import math
-import board
-import busio
-import adafruit_mpu6050
+from smbus2 import SMBus
 
-G = 9.80665                              # m/s^2 per g
+MPU_ADDR   = 0x68        # GY-521 with AD0 low
+PWR_MGMT_1 = 0x6B        # power management: bit 6 = sleep
+ACCEL_XOUT = 0x3B        # six accelerometer bytes start here
+GYRO_XOUT  = 0x43        # six gyroscope bytes start here
 
-# Initialize I2C and the sensor (GY-521, AD0 low -> 0x68)
-i2c = busio.I2C(board.SCL, board.SDA)
-mpu = adafruit_mpu6050.MPU6050(i2c, address=0x68)
-mpu.accelerometer_range = adafruit_mpu6050.Range.RANGE_2_G
-mpu.gyro_range = adafruit_mpu6050.GyroRange.RANGE_250_DPS
+bus = SMBus(1)                                   # I2C bus 1: GPIO2 = SDA, GPIO3 = SCL
+bus.write_byte_data(MPU_ADDR, PWR_MGMT_1, 0)     # wake the chip (it boots asleep)
+
+def read_word(reg):
+    # signed 16-bit value from a high/low register pair
+    high = bus.read_byte_data(MPU_ADDR, reg)
+    low = bus.read_byte_data(MPU_ADDR, reg + 1)
+    value = (high << 8) | low
+    return value - 65536 if value > 32767 else value
 
 while True:
-    ax, ay, az = (v / G for v in mpu.acceleration)          # g
-    gx, gy, gz = (math.degrees(v) for v in mpu.gyro)        # deg/s
-    mag = math.sqrt(ax*ax + ay*ay + az*az)                  # should be ~1 g at rest
-    pitch = math.degrees(math.atan2(ax, math.sqrt(ay*ay + az*az)))
-    roll = math.degrees(math.atan2(ay, math.sqrt(ax*ax + az*az)))
+    ax = read_word(ACCEL_XOUT)                   # raw counts: 16384 per g
+    ay = read_word(ACCEL_XOUT + 2)
+    az = read_word(ACCEL_XOUT + 4)
+    gx = read_word(GYRO_XOUT)                    # raw counts: 131 per deg/s
+    gy = read_word(GYRO_XOUT + 2)
+    gz = read_word(GYRO_XOUT + 4)
 
-    print("------------------------------------------")
-    print(f"Accel  (g)    : X {ax:6.2f}  Y {ay:6.2f}  Z {az:6.2f}   |a| {mag:4.2f}")
-    print(f"Gyro   (deg/s): X {gx:7.2f} Y {gy:7.2f} Z {gz:7.2f}")
-    print(f"Tilt   (deg)  : pitch {pitch:6.1f}  roll {roll:6.1f}")
-    print(f"Temperature   : {mpu.temperature:.2f} C")
-
+    print(f"Accel: X= {ax:6d}, Y= {ay:6d}, Z= {az:6d}")
+    print(f"Gyro:  X= {gx:6d}, Y= {gy:6d}, Z= {gz:6d}")
     time.sleep(0.5)
 \end{lstlisting}
 
@@ -556,10 +559,10 @@ void loop() { server.handleClient(); }
   \item \textbf{Part A.} With the Pi off, the module's VCC, GND, SDA and SCL were wired
         to header pins 1, 6, 3 and 5. I$^2$C was enabled in \texttt{raspi-config}, and
         \texttt{i2cdetect} confirmed a device at \texttt{0x68}.
-  \item The driver was installed and Listing~\ref{lst:pi} was saved as \texttt{imu.py}
-        and run with \texttt{python3 imu.py}. The terminal printed the six IMU values,
-        the magnitude, the tilt angles and the temperature twice a second, first with
-        the module flat on the desk and then while it was tilted and turned.
+  \item \texttt{smbus2} was installed and Listing~\ref{lst:pi} was saved as
+        \texttt{imu.py} and run with \texttt{python3 imu.py}. The terminal printed the
+        raw accelerometer and gyroscope counts twice a second with the module lying on
+        the desk; the run was recorded on video.
   \item \textbf{Part B.} The same module was moved to the ESP32: VCC to 3V3, GND to GND,
         SDA to GPIO21, SCL to GPIO22. The ESP32 was powered from a USB port of the
         Raspberry Pi. In the Arduino IDE the ESP32 board package and the Adafruit
@@ -585,8 +588,10 @@ the acceleration components summed to a magnitude of $1.03$--$1.05\,g$ and the
 gyroscope read within $\pm5\,^{\circ}$/s of zero, while \textbf{during hand movement}
 the magnitude departed from $1\,g$ (as low as $0.83$ and as high as $1.65\,g$) and the
 gyroscope showed turn rates of up to $\pm180\,^{\circ}$/s. The chip temperature held
-at $24.9$--$25.1\,^{\circ}\mathrm{C}$. The \textbf{Raspberry Pi} printed the same
-quantities to its terminal, with the tilt angles derived from the accelerometer.
+at $24.9$--$25.1\,^{\circ}\mathrm{C}$. On the \textbf{Raspberry Pi} the raw registers
+of the resting module gave a steady $1.03\,g$ acceleration vector and gyroscope
+offsets of $-0.9$, $2.7$ and $1.2\,^{\circ}$/s, from which the module's tilt on the
+desk was recovered.
 \end{keybox}
 
 \subsection*{Observed outputs --- Part B, ESP32 dashboard}
@@ -701,32 +706,88 @@ are its zero-rate offsets, which a real application measures at start-up and sub
 
 \subsection*{Observed outputs --- Part A, Raspberry Pi terminal}
 
-\begin{notebox}
-\textbf{[To be completed.]} The Raspberry Pi run is to be recorded and its terminal
-readings --- module flat on the desk, then tilted, then turned --- transcribed here in
-the same form as the ESP32 table, together with a terminal still. The program and the
-wiring of Part A are complete above.
-\end{notebox}
+\vspace{2pt}
+\noindent
+{\small
+\begin{tabularx}{\textwidth}{@{}c r r r r r r c c c c c c >{\centering\arraybackslash}X@{}}
+\toprule
+\rowcolor{soft}
+\textbf{\#} & \multicolumn{3}{c}{\textbf{Accel (raw)}} & \multicolumn{3}{c}{\textbf{Gyro (raw)}} & \multicolumn{3}{c}{\textbf{Accel ($g$)}} & $|\mathbf f|$ & \multicolumn{3}{c}{\textbf{Gyro ($^{\circ}$/s)}} \\
+\rowcolor{soft}
+ & X & Y & Z & X & Y & Z & X & Y & Z & ($g$) & X & Y & Z \\
+\midrule
+1 & 7336 & -5528 & 14104 & -136 & 286 & 336 & $0.448$ & $-0.337$ & $0.861$ & 1.027 & $-1.0$ & $2.2$ & $2.6$ \\
+2 & 7304 & -5660 & 14240 & -196 & 492 & 1 & $0.446$ & $-0.345$ & $0.869$ & 1.036 & $-1.5$ & $3.8$ & $0.0$ \\
+3 & 7380 & -5732 & 14508 & -108 & 447 & 368 & $0.450$ & $-0.350$ & $0.885$ & 1.053 & $-0.8$ & $3.4$ & $2.8$ \\
+4 & 7664 & -5588 & 14260 & -112 & 364 & -93 & $0.468$ & $-0.341$ & $0.870$ & 1.045 & $-0.9$ & $2.8$ & $-0.7$ \\
+5 & 7424 & -5888 & 14168 & -106 & 353 & 141 & $0.453$ & $-0.359$ & $0.865$ & 1.040 & $-0.8$ & $2.7$ & $1.1$ \\
+6 & 7348 & -5632 & 14332 & -38 & 132 & 31 & $0.448$ & $-0.344$ & $0.875$ & 1.041 & $-0.3$ & $1.0$ & $0.2$ \\
+7 & 7336 & -5648 & 14096 & -104 & 259 & 223 & $0.448$ & $-0.345$ & $0.860$ & 1.029 & $-0.8$ & $2.0$ & $1.7$ \\
+8 & 7348 & -5868 & 14180 & -120 & 443 & 247 & $0.448$ & $-0.358$ & $0.865$ & 1.038 & $-0.9$ & $3.4$ & $1.9$ \\
+9 & 7360 & -5628 & 14280 & -98 & 386 & 118 & $0.449$ & $-0.344$ & $0.872$ & 1.039 & $-0.7$ & $2.9$ & $0.9$ \\
+10 & 7332 & -5684 & 14336 & -206 & 416 & 152 & $0.448$ & $-0.347$ & $0.875$ & 1.042 & $-1.6$ & $3.2$ & $1.2$ \\
+\bottomrule
+\end{tabularx}}
 
-\subsection*{The setup}
+\vspace{6pt}
+\noindent Ten consecutive pairs of lines transcribed from the terminal
+(Figure~\ref{fig:pi-terminal}); the module was resting on the desk throughout. The
+raw counts are converted with $16384$ counts/$g$ and $131$ counts/($^{\circ}$/s). The
+accelerometer values repeat to within about $\pm150$ counts ($\pm0.01\,g$), and the
+magnitude is $1.039\,g$ on average --- the $1\,g$ of gravity to $3\,\%$. The
+gyroscope reads $-0.9$, $2.7$ and $1.2\,^{\circ}$/s on average:
+the zero-rate offsets of a sensor that is not turning, of the same size as those seen
+at rest on the ESP32. From the mean acceleration $(0.451, -0.347, 0.870)\,g$
+the module's attitude on the desk was pitch $26^{\circ}$ and roll
+$-20^{\circ}$ --- it was lying on its jumper wires, tilted, as the
+photograph in Figure~\ref{fig:pi-setup} shows.
 
 \begin{figure}[H]
 \centering
-\begin{minipage}[t]{0.66\textwidth}
+\begin{minipage}[t]{0.55\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{figures/rpi_imu_terminal.jpg}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.43\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{figures/rpi_imu_screen.jpg}
+\end{minipage}
+\caption{Part A on screen. \emph{Left:} the terminal while \texttt{imu.py} runs,
+printing an \texttt{Accel} and a \texttt{Gyro} line of raw counts twice a second.
+\emph{Right:} a wider view of the monitor: the terminal in front of the wiring notes
+used for the setup (VCC $3.3\,\mathrm{V}$, GND, SDA $\to$ GPIO2 pin 3, SCL $\to$ GPIO3
+pin 5).}
+\label{fig:pi-terminal}
+\end{figure}
+
+\subsection*{The setups}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.42\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{figures/rpi_mpu6050_setup.jpg}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.42\textwidth}
 \vspace{0pt}
 \centering
 \includegraphics[width=\linewidth]{figures/esp32_mpu6050_wiring.jpg}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.31\textwidth}
+\begin{minipage}[t]{0.13\textwidth}
 \vspace{0pt}
 \centering
-\includegraphics[width=0.8\linewidth]{figures/gy521_module.jpg}
+\includegraphics[width=\linewidth]{figures/gy521_module.jpg}
 \end{minipage}
-\caption{\emph{Left:} Part B --- the ESP32 DevKit (right, powered from a USB port of the
-Raspberry Pi) with the GY-521 on four jumper wires --- red VCC, black GND, green SDA,
-yellow SCL --- in front of the tablet showing the dashboard. \emph{Right:} the GY-521
-module with its power LED lit; the MPU6050 is the small square package in the centre.}
-\label{fig:setup}
+\caption{\emph{Left:} Part A --- the Raspberry Pi 4 with the GY-521 on four jumper
+wires from the first rows of the header, the module lying tilted on the wires.
+\emph{Centre:} Part B --- the ESP32 DevKit (powered from a USB port of the Pi) with the
+same module --- red VCC, black GND, green SDA, yellow SCL --- in front of the tablet
+showing the dashboard. \emph{Right:} the GY-521 with its power LED lit; the MPU6050
+is the small square package in the centre.}
+\label{fig:pi-setup}
 \end{figure}
 
 \subsection*{Video demonstration and code}
@@ -753,7 +814,7 @@ available in the following shared folder:
         orientation from the gyroscope, exactly as the chain in Figure~\ref{fig:ins}
         shows.
   \item \textbf{Tilt from the accelerometer, turn rate from the gyroscope.} The
-        rest reading gave the tilt of the module to within a degree or two without any
+        rest readings on both boards gave the tilt of the module without any
         integration at all, because gravity is a fixed reference; the gyroscope, by
         contrast, only ever gives a \emph{rate}, and its reading returns to (nearly)
         zero the moment the motion stops. The two sensors are complementary: the
@@ -786,9 +847,11 @@ available in the following shared folder:
 \section{Conclusion}
 
 The MPU6050 IMU was read over I$^2$C from both a Raspberry Pi and an ESP32, giving
-three-axis acceleration and three-axis angular velocity in physical units. The ESP32
-served the six values as a live dashboard on its own Wi-Fi network, and the recording
-showed the behaviour the theory predicts: a resting sensor reads a $1\,g$ acceleration
+three-axis acceleration and three-axis angular velocity in physical units. The Raspberry Pi
+read the raw registers directly and showed a resting module at a steady $1.03\,g$ with
+gyroscope offsets of a few $^{\circ}$/s; the ESP32 served the six values as a live
+dashboard on its own Wi-Fi network, and its recording showed the behaviour the theory
+predicts: a resting sensor reads a $1\,g$ acceleration
 vector and a zero turn rate, tilting redistributes the $1\,g$ between the axes (from
 which a tilt of $16^{\circ}$ and $27^{\circ}$ was recovered), and moving the sensor by hand
 produced accelerations of up to $1.65\,g$ and turn rates of up to $180\,^{\circ}$/s.

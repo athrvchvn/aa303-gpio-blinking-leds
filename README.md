@@ -94,16 +94,16 @@ The report also works through why the same room reads 719 m on one day and 627 m
 
 An MPU6050 six-axis IMU (GY-521 breakout, I²C address 0x68) read on two boards:
 
-1. **Raspberry Pi 4** — `adafruit_mpu6050` on bus 1, printing acceleration (g), angular velocity (°/s), the vector magnitude, tilt angles and temperature twice a second. *Terminal readings still to be recorded and added.*
+1. **Raspberry Pi 4** (20 September 2026) — the MPU6050 registers read directly with `smbus2` on bus 1, printing the raw accelerometer and gyroscope counts twice a second; ten readings transcribed from the video give a steady 1.03 g at rest, gyro offsets of a few °/s, and the module's tilt (pitch 26°, roll −20°).
 2. **ESP32** (10 September 2026) — the Adafruit MPU6050 library on GPIO21/22, with the board as a Wi-Fi access point serving the "ESP32 IMU Dashboard" at `192.168.4.1`; nine readings transcribed from the video while the sensor was moved by hand (|a| = 1 g at rest, up to 1.65 g moving; gyro within ±5 °/s at rest, up to 180 °/s moving) are tabulated and plotted.
 
 The theory section relates the six readings to inertial navigation — specific force vs. gravity, tilt from the accelerometer, and why integrating to velocity/position drifts.
 
 | Path | Description |
 |---|---|
-| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/240003021_Atharva_Chavan_report6.pdf`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/240003021_Atharva_Chavan_report6.pdf) | The compiled report (8 pages) |
+| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/240003021_Atharva_Chavan_report6.pdf`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/240003021_Atharva_Chavan_report6.pdf) | The compiled report (9 pages) |
 | [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/imu_sensor_report.tex`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/imu_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
-| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/figures/`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/figures/) | Stills from the demonstration video (wiring, module, dashboard) |
+| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/figures/`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/figures/) | Photographs of the setups and stills from the demonstration videos (Pi terminal, ESP32 dashboard) |
 
 ## Code
 
