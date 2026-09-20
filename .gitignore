@@ -26,3 +26,6 @@ DHT11 sensor Data/
 
 # Raw photos/videos for Report 5 (shared via Google Drive; crops and stills live in report-5/figures/)
 BMP-280 sensor data reading for pressure, temperature and altitude/
+
+# Raw videos for Report 6 (shared via Google Drive; stills live in the report's figures/)
+IMU sensor data reading for inertial navigationaccelarationvelocity/

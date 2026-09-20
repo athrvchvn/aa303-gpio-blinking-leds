@@ -16,6 +16,7 @@ code for all experiments is shared, and lives in [`code/`](code/) at the root.
 | 3 | Pulse Width Modulation Using GPIO | [`Report 3 - Pulse Width Modulation Using GPIO/`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/) | [`240003021_Atharva_Chavan_report3.pdf`](Report%203%20-%20Pulse%20Width%20Modulation%20Using%20GPIO/240003021_Atharva_Chavan_report3.pdf) |
 | 4 | DHT11 Sensor Data Reading for Temperature and Humidity | [`Report 4 - DHT11 Sensor Data Reading for Temperature and Humidity/`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/) | [`240003021_Atharva_Chavan_report4.pdf`](Report%204%20-%20DHT11%20Sensor%20Data%20Reading%20for%20Temperature%20and%20Humidity/240003021_Atharva_Chavan_report4.pdf) |
 | 5 | BMP280 Sensor Data Reading for Pressure, Temperature and Altitude | [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/) | [`240003021_Atharva_Chavan_report5.pdf`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/240003021_Atharva_Chavan_report5.pdf) |
+| 6 | IMU Sensor Data Reading for Inertial Navigation: Acceleration and Angular Velocity | [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/) | [`240003021_Atharva_Chavan_report6.pdf`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/240003021_Atharva_Chavan_report6.pdf) |
 
 ### Report 1 — Basic Operations Using GPIO: Blinking LEDs
 
@@ -89,11 +90,26 @@ The report also works through why the same room reads 719 m on one day and 627 m
 | [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/bmp280_sensor_report.tex`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/bmp280_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
 | [`Report 5 - BMP280 Sensor Data Reading for Pressure, Temperature and Altitude/figures/`](Report%205%20-%20BMP280%20Sensor%20Data%20Reading%20for%20Pressure%2C%20Temperature%20and%20Altitude/figures/) | Photographs of the setups and the module, and stills (Pi editor/terminal, ESP32 dashboard) taken from the demonstration videos |
 
+### Report 6 — IMU Sensor Data Reading for Inertial Navigation: Acceleration and Angular Velocity
+
+An MPU6050 six-axis IMU (GY-521 breakout, I²C address 0x68) read on two boards:
+
+1. **Raspberry Pi 4** — `adafruit_mpu6050` on bus 1, printing acceleration (g), angular velocity (°/s), the vector magnitude, tilt angles and temperature twice a second. *Terminal readings still to be recorded and added.*
+2. **ESP32** (10 September 2026) — the Adafruit MPU6050 library on GPIO21/22, with the board as a Wi-Fi access point serving the "ESP32 IMU Dashboard" at `192.168.4.1`; nine readings transcribed from the video while the sensor was moved by hand (|a| = 1 g at rest, up to 1.65 g moving; gyro within ±5 °/s at rest, up to 180 °/s moving) are tabulated and plotted.
+
+The theory section relates the six readings to inertial navigation — specific force vs. gravity, tilt from the accelerometer, and why integrating to velocity/position drifts.
+
+| Path | Description |
+|---|---|
+| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/240003021_Atharva_Chavan_report6.pdf`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/240003021_Atharva_Chavan_report6.pdf) | The compiled report (8 pages) |
+| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/imu_sensor_report.tex`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/imu_sensor_report.tex) | LaTeX source — builds with pdfLaTeX / Overleaf |
+| [`Report 6 - IMU Sensor Data Reading for Inertial Navigation/figures/`](Report%206%20-%20IMU%20Sensor%20Data%20Reading%20for%20Inertial%20Navigation/figures/) | Stills from the demonstration video (wiring, module, dashboard) |
+
 ## Code
 
 [`code/`](code/) holds the source for every experiment, on both boards —
 Python for the Raspberry Pi and Arduino sketches for the ESP32 (Reports 2
-and 3 use the Raspberry Pi only; Reports 1, 4 and 5 use both). See
+and 3 use the Raspberry Pi only; Reports 1, 4, 5 and 6 use both). See
 [`code/README.md`](code/README.md) for the file-by-file listing, the pin
 assignments and the wiring notes.
 
